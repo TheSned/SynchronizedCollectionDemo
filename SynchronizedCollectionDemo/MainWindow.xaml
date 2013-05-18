@@ -1,0 +1,52 @@
+﻿<Window x:Class="SynchronizedCollectionDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:SynchronizedCollectionDemo.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=True}"
+        Title="MainWindow" Height="350" Width="525" mc:Ignorable="d">
+  <Window.DataContext>
+    <viewModels:MainViewModel/>
+  </Window.DataContext>
+  <Window.Resources>
+    <DataTemplate x:Key="HobbyTemplate" DataType="viewModels:HobbyViewModel">
+      <TextBlock Text="{Binding Model.HobbyName}"/>
+    </DataTemplate>
+    <DataTemplate x:Key="EmployeeTemplate" DataType="viewModels:EmployeeViewModel">
+      <Expander Header="{Binding HeaderText}" IsExpanded="True">
+        <ItemsControl Margin="20,0,0,0" ItemsSource="{Binding Hobbies}" ItemTemplate="{StaticResource HobbyTemplate}"></ItemsControl>
+      </Expander>
+    </DataTemplate>
+    <DataTemplate x:Key="StoreTemplate" DataType="viewModels:StoreViewModel">
+      <Expander IsExpanded="True" Header="{Binding HeaderText}">
+        <ItemsControl Margin="20,0,0,0" ItemsSource="{Binding Employees}" ItemTemplate="{StaticResource EmployeeTemplate}"></ItemsControl>
+      </Expander>
+    </DataTemplate>
+  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <WrapPanel Orientation="Horizontal">
+      <Button Margin="2" Content="Add Store" Command="{Binding AddStoreCommand}"/>
+      <Button Margin="2" Content="Add Employee" Command="{Binding AddEmployeeCommand}"/>
+      <Button Margin="2" Content="Add Hobby" Command="{Binding AddHobbyCommand}"/>
+      <Button Margin="2" Content="Remove Store" Command="{Binding RemoveStoreCommand}"/>
+      <Button Margin="2" Content="Remove Employee" Command="{Binding RemoveEmployeeCommand}"/>
+      <Button Margin="2" Content="Remove Hobby" Command="{Binding RemoveHobbyCommand}"/>
+      <Button Margin="2" Content="Move Store Down" Command="{Binding MoveStoreDownCommand}"/>
+      <Button Margin="2" Content="Move Employee Down" Command="{Binding MoveEmployeeDownCommand}"/>
+      <Button Margin="2" Content="Move Hobby Down" Command="{Binding MoveHobbyDownCommand}"/>
+      <Button Margin="2" Content="Clear Stores" Command="{Binding ClearStoresCommand}"/>
+      <Button Margin="2" Content="Clear Employees" Command="{Binding ClearEmployeesCommand}"/>
+      <Button Margin="2" Content="Clear Hobbies" Command="{Binding ClearHobbiesCommand}"/>
+    </WrapPanel>
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <ItemsControl ItemsSource="{Binding Stores}" ItemTemplate="{StaticResource StoreTemplate}"></ItemsControl>
+    </ScrollViewer>
+
+  </Grid>
+</Window>
