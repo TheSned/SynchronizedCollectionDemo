@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace SynchronizedCollectionDemo
 {
-  public class SynchronizedObservableCollection<TOuter, TInner> : IEnumerable<TOuter>, INotifyCollectionChanged, IWeakEventListener
+  public class SynchronizedObservableCollection<TOuter, TInner> : IList<TOuter>, INotifyCollectionChanged, IWeakEventListener
   {
     private Func<TInner, TOuter> Projection { get; set; }
     private ObservableCollection<TOuter> OuterCollection { get; set; }
@@ -17,7 +17,6 @@ namespace SynchronizedCollectionDemo
     {
       this.Projection = projection;
       this.OuterCollection = new ObservableCollection<TOuter>();
-
       ResetCollection(innerCollection);
       CollectionChangedEventManager.AddListener(innerCollection, this);
     }
@@ -92,6 +91,60 @@ namespace SynchronizedCollectionDemo
     {
       add { this.OuterCollection.CollectionChanged += value; }
       remove { this.OuterCollection.CollectionChanged -= value; }
+    }
+
+    void ICollection<TOuter>.Add(TOuter item)
+    {
+      throw new NotSupportedException("This operation is not supported because the collection is read-only.");
+    }
+
+    void ICollection<TOuter>.Clear()
+    {
+      throw new NotSupportedException("This operation is not supported because the collection is read-only.");
+    }
+
+    public bool Contains(TOuter item)
+    {
+      return this.OuterCollection.Contains(item);
+    }
+
+    public void CopyTo(TOuter[] array, int arrayIndex)
+    {
+      this.OuterCollection.CopyTo(array, arrayIndex);
+    }
+
+    bool ICollection<TOuter>.Remove(TOuter item)
+    {
+      throw new NotSupportedException("This operation is not supported because the collection is read-only.");
+    }
+
+    public int Count { get { return this.OuterCollection.Count; } }
+    public bool IsReadOnly { get { return true; } }
+
+    public int IndexOf(TOuter item)
+    {
+      return this.OuterCollection.IndexOf(item);
+    }
+
+    void IList<TOuter>.Insert(int index, TOuter item)
+    {
+      throw new NotSupportedException("This operation is not supported because the collection is read-only.");
+    }
+
+    void IList<TOuter>.RemoveAt(int index)
+    {
+      throw new NotSupportedException("This operation is not supported because the collection is read-only.");
+    }
+
+    public TOuter this[int index]
+    {
+      get { return this.OuterCollection[index]; }
+    }
+
+    TOuter IList<TOuter>.this[int index]
+    {
+      get { return this[index]; }
+      set { throw new NotSupportedException("This operation is not supported because the collection is read-only."); }
     }
   }
 }
