@@ -18,6 +18,8 @@ namespace SynchronizedCollectionDemo
     {
       this.Projection = projection;
       this.OuterCollection = new ObservableCollection<TOuter>();
+      this.OuterCollection.CollectionChanged += OuterCollectionOnCollectionChanged;
+      ((INotifyPropertyChanged)this.OuterCollection).PropertyChanged += OuterCollectionOnPropertyChanged;
       ResetCollection(innerCollection);
       CollectionChangedEventManager.AddListener(innerCollection, this);
     }
@@ -65,6 +67,18 @@ namespace SynchronizedCollectionDemo
       return true;
     }
 
+    private void OuterCollectionOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+    {
+      if (this.PropertyChanged != null)
+        this.PropertyChanged(this, args);
+    }
+
+    private void OuterCollectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+    {
+      if (this.CollectionChanged != null)
+        this.CollectionChanged(this, args);
+    }
+
 
     private void ResetCollection(Collection<TInner> innerCollection)
     {
@@ -88,11 +102,8 @@ namespace SynchronizedCollectionDemo
       return GetEnumerator();
     }
 
-    public event NotifyCollectionChangedEventHandler CollectionChanged
-    {
-      add { this.OuterCollection.CollectionChanged += value; }
-      remove { this.OuterCollection.CollectionChanged -= value; }
-    }
+    public event NotifyCollectionChangedEventHandler CollectionChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     void ICollection<TOuter>.Add(TOuter item)
     {
@@ -155,10 +166,5 @@ namespace SynchronizedCollectionDemo
       set { throw new NotSupportedException("This operation is not supported because the collection is read-only."); }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged
-    {
-      add { ((INotifyPropertyChanged)this.OuterCollection).PropertyChanged += value; }
-      remove { ((INotifyPropertyChanged)this.OuterCollection).PropertyChanged -= value; }
-    }
   }
 }
