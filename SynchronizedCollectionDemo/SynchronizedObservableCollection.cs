@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 
 namespace SynchronizedCollectionDemo
 {
-  public class SynchronizedObservableCollection<TOuter, TInner> : IList<TOuter>, ICollection, INotifyCollectionChanged, IWeakEventListener
+  public class SynchronizedObservableCollection<TOuter, TInner> : IList<TOuter>, ICollection, INotifyCollectionChanged, IWeakEventListener, INotifyPropertyChanged
   {
     private Func<TInner, TOuter> Projection { get; set; }
     private ObservableCollection<TOuter> OuterCollection { get; set; }
@@ -152,6 +153,12 @@ namespace SynchronizedCollectionDemo
     {
       get { return this[index]; }
       set { throw new NotSupportedException("This operation is not supported because the collection is read-only."); }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged
+    {
+      add { ((INotifyPropertyChanged)this.OuterCollection).PropertyChanged += value; }
+      remove { ((INotifyPropertyChanged)this.OuterCollection).PropertyChanged -= value; }
     }
   }
 }
