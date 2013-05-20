@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace SynchronizedCollectionDemo
 {
-  public class SynchronizedObservableCollection<TOuter, TInner> : IList<TOuter>, INotifyCollectionChanged, IWeakEventListener
+  public class SynchronizedObservableCollection<TOuter, TInner> : IList<TOuter>, ICollection, INotifyCollectionChanged, IWeakEventListener
   {
     private Func<TInner, TOuter> Projection { get; set; }
     private ObservableCollection<TOuter> OuterCollection { get; set; }
@@ -118,7 +118,14 @@ namespace SynchronizedCollectionDemo
       throw new NotSupportedException("This operation is not supported because the collection is read-only.");
     }
 
+    void ICollection.CopyTo(Array array, int index)
+    {
+      this.CopyTo((TOuter[])array, index);
+    }
+
     public int Count { get { return this.OuterCollection.Count; } }
+    public object SyncRoot { get { return ((ICollection)this.OuterCollection).SyncRoot; } }
+    public bool IsSynchronized { get { return true; } }
     public bool IsReadOnly { get { return true; } }
 
     public int IndexOf(TOuter item)
